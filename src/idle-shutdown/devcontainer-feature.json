@@ -1,0 +1,14 @@
+{
+  "id": "idle-shutdown",
+  "version": "1.0.0",
+  "name": "Idle shutdown",
+  "description": "Stops the container once nobody has been connected to it for a while: no VS Code window, no interactive docker exec shell, no SSH login.",
+  "options": {
+    "minutes": {
+      "type": "string",
+      "default": "30",
+      "description": "Idle minutes before the container stops; 0 disables. IDLE_SHUTDOWN_MINUTES in containerEnv overrides it without a rebuild of the feature."
+    }
+  },
+  "entrypoint": "/usr/local/share/idle-shutdown/entrypoint.sh"
+}

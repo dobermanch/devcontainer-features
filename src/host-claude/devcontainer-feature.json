@@ -1,0 +1,9 @@
+{
+  "id": "host-claude",
+  "version": "1.0.0",
+  "name": "Host Claude Code config",
+  "description": "Mounts the host's ~/.claude at /home/vscode/.claude, so Claude Code in the container shares the host's login, settings and memory. Assumes the container user is vscode.",
+  "mounts": [
+    "source=${localEnv:USERPROFILE}${localEnv:HOME}/.claude,target=/home/vscode/.claude,type=bind"
+  ]
+}

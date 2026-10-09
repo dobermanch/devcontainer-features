@@ -1,0 +1,22 @@
+{
+  "id": "vscode-base",
+  "version": "1.0.0",
+  "name": "VS Code base",
+  "description": "The VS Code extensions and settings every repo here wants. A repo's own customizations are merged on top: its extensions are added to these, its settings win.",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "anthropic.claude-code",
+        "editorconfig.editorconfig",
+        "eamodio.gitlens",
+        "streetsidesoftware.code-spell-checker",
+        "redhat.vscode-yaml",
+        "mikestead.dotenv",
+        "github.vscode-github-actions"
+      ],
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "bash"
+      }
+    }
+  }
+}

@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+# Runs the devcontainer CLI from a container, so the only thing a machine needs
+# is Docker. Usage is the CLI's own: scripts/devcontainer features test ...
+#
+# The CLI drives the host's Docker daemon through its socket, and the daemon
+# resolves every path it is handed on the host. So the repo and the CLI's temp
+# directory are mounted at the same path inside as outside, and HOME is passed
+# through so ${localEnv:HOME} in a feature's mounts means the host's home.
+set -euo pipefail
+
+CLI_VERSION=0.89.0
+IMAGE="devcontainer-cli:$CLI_VERSION"
+REPO="$(cd "$(dirname "$0")/.." && pwd)"
+TMP="${DEVCONTAINER_TMP:-/tmp/devcontainer-cli-$(id -u)}"
+mkdir -p "$TMP"
+
+if ! docker image inspect "$IMAGE" >/dev/null 2>&1; then
+  # docker:cli ships static docker and buildx binaries, which run on Debian.
+  docker build -q -t "$IMAGE" - >/dev/null <<EOF
+FROM docker:29-cli AS docker
+FROM node:20-bookworm-slim
+COPY --from=docker /usr/local/bin/docker /usr/local/bin/docker
+COPY --from=docker /usr/local/libexec/docker/cli-plugins/docker-buildx /usr/local/libexec/docker/cli-plugins/docker-buildx
+RUN apt-get update && apt-get install -y --no-install-recommends git ca-certificates \
+ && rm -rf /var/lib/apt/lists/* \
+ && npm install -g @devcontainers/cli@$CLI_VERSION
+EOF
+fi
+
+tty=()
+[ -t 0 ] && [ -t 1 ] && tty=(-it)
+
+# The Docker config carries registry logins, which `features publish` needs.
+docker_config=()
+[ -f "$HOME/.docker/config.json" ] && docker_config=(-v "$HOME/.docker/config.json:/root/.docker/config.json:ro")
+
+exec docker run --rm "${tty[@]}" \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -v "$REPO:$REPO" -w "$REPO" \
+  -v "$TMP:$TMP" -e TMPDIR="$TMP" \
+  -e HOME="$HOME" -e USERPROFILE= \
+  "${docker_config[@]}" -e DOCKER_CONFIG=/root/.docker \
+  "$IMAGE" devcontainer "$@"

@@ -1,0 +1,8 @@
+{
+  "minutes": {
+    "image": "mcr.microsoft.com/devcontainers/base:jammy",
+    "features": {
+      "idle-shutdown": { "minutes": "5" }
+    }
+  }
+}
