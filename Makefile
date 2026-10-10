@@ -1,8 +1,8 @@
 # REGISTRY and NAMESPACE come from a local .env (see .env.example) or the
 # environment; command-line values (make publish REGISTRY=...) override both.
 -include .env
-REGISTRY  ?=
-NAMESPACE ?=
+REGISTRY  ?= ghcr.io
+NAMESPACE ?= dobermanch/devcontainer-features
 BASE_IMAGE ?= mcr.microsoft.com/devcontainers/base:jammy
 DEVCONTAINER := scripts/devcontainer
 

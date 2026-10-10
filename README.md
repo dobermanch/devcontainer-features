@@ -6,8 +6,8 @@ for things most of my repos would otherwise copy into their own `devcontainer.js
 | Feature | What it does |
 |---|---|
 | `idle-shutdown` | Stops the container once nobody has been connected for 30 minutes (option `minutes`) |
-| `host-ssh` | Mounts the host's `~/.ssh` read-only at `/home/vscode/.ssh` |
-| `host-claude` | Mounts the host's `~/.claude` at `/home/vscode/.claude` |
+| `host-ssh` | Mounts the host's `~/.ssh` read-only as the container user's `~/.ssh` |
+| `host-claude` | Mounts the host's `~/.claude` as the container user's `~/.claude` |
 | `vscode-base` | Extensions and settings every repo wants, Claude Code included |
 
 They are separate because a repo does not always want all of them: one that
@@ -96,8 +96,19 @@ first, Linux the second, so exactly one resolves. A shell that sets both on
 Windows (git-bash launching VS Code) concatenates them into a path that does
 not exist and the mount fails.
 
-Both target `/home/vscode`, so they assume the container user is `vscode`, as
-in the `mcr.microsoft.com/devcontainers/*` images.
+A mount target can't name the container user: mounts are resolved before the
+container exists, so `${containerEnv:HOME}` reaches Docker unexpanded and an
+option is never substituted into a feature's mounts. So each mounts at a fixed
+path (`/mnt/host-ssh`, `/mnt/host-claude`), and `install.sh` links it into
+`$_REMOTE_USER_HOME`, the one place the user is known. Any `remoteUser` works;
+the link dangles during the image build and resolves once the container starts.
+
+`host-claude` also mounts the directory at the host's own path
+(`${localEnv:HOME}/.claude`). Claude Code writes absolute host paths into its
+config (`"installLocation": "/home/<you>/.claude/plugins/local"` for a plugin
+marketplace added from a local directory), and container Claude reads them
+through `~/.claude` and opens them as written. On Windows `HOME` is unset and
+the target is a harmless `/.claude`.
 
 The mounts are written in the string form on purpose. The object form
 (`{"type": "bind", ..., "readonly": true}`) is accepted, but the CLI drops

@@ -1,0 +1,9 @@
+{
+  "root-user": {
+    "image": "mcr.microsoft.com/devcontainers/base:jammy",
+    "remoteUser": "root",
+    "features": {
+      "host-claude": {}
+    }
+  }
+}

@@ -1,9 +1,9 @@
 {
   "id": "host-ssh",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "name": "Host SSH keys",
-  "description": "Mounts the host's ~/.ssh read-only at /home/vscode/.ssh, so git over SSH works with your own keys. Assumes the container user is vscode.",
+  "description": "Mounts the host's ~/.ssh read-only and links it into the remote user's home, so git over SSH works with your own keys.",
   "mounts": [
-    "source=${localEnv:USERPROFILE}${localEnv:HOME}/.ssh,target=/home/vscode/.ssh,type=bind,readonly"
+    "source=${localEnv:USERPROFILE}${localEnv:HOME}/.ssh,target=/mnt/host-ssh,type=bind,readonly"
   ]
 }
