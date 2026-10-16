@@ -1,8 +1,11 @@
 {
   "id": "host-claude",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "name": "Host Claude Code config",
-  "description": "Mounts the host's ~/.claude and links it into the remote user's home, so Claude Code in the container shares the host's login, settings and memory. Also mounts it at the host's own path, so absolute paths the host wrote into it resolve.",
+  "description": "Installs Claude Code (the official anthropics claude-code feature) and mounts the host's ~/.claude and links it into the remote user's home, so Claude Code in the container shares the host's login, settings and memory. Also mounts it at the host's own path, so absolute paths the host wrote into it resolve.",
+  "dependsOn": {
+    "ghcr.io/anthropics/devcontainer-features/claude-code:1": {}
+  },
   "mounts": [
     "source=${localEnv:USERPROFILE}${localEnv:HOME}/.claude,target=/mnt/host-claude,type=bind",
     "source=${localEnv:USERPROFILE}${localEnv:HOME}/.claude,target=${localEnv:HOME}/.claude,type=bind"

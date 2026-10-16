@@ -7,7 +7,7 @@ for things most of my repos would otherwise copy into their own `devcontainer.js
 |---|---|
 | `idle-shutdown` | Stops the container once nobody has been connected for 30 minutes (option `minutes`) |
 | `host-ssh` | Mounts the host's `~/.ssh` read-only as the container user's `~/.ssh` |
-| `host-claude` | Mounts the host's `~/.claude` as the container user's `~/.claude` |
+| `host-claude` | Installs Claude Code and mounts the host's `~/.claude` as the container user's `~/.claude` |
 | `vscode-base` | Extensions and settings every repo wants, Claude Code included |
 
 They are separate because a repo does not always want all of them: one that
@@ -102,6 +102,10 @@ option is never substituted into a feature's mounts. So each mounts at a fixed
 path (`/mnt/host-ssh`, `/mnt/host-claude`), and `install.sh` links it into
 `$_REMOTE_USER_HOME`, the one place the user is known. Any `remoteUser` works;
 the link dangles during the image build and resolves once the container starts.
+
+`host-claude` installs the CLI through `dependsOn` on the official
+`ghcr.io/anthropics/devcontainer-features/claude-code:1`, so a repo needs only
+this one feature.
 
 `host-claude` also mounts the directory at the host's own path
 (`${localEnv:HOME}/.claude`). Claude Code writes absolute host paths into its
